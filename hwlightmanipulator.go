@@ -7,5 +7,5 @@ type HWLightManipulator interface {
 	//IsTurnedOn() error, bool
 
 	// TunLight commands the light to turn on or off
-	TunLight(on bool) error
+	TunLight(on bool)
 }

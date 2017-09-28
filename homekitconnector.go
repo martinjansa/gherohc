@@ -4,7 +4,7 @@ package main
 type HomeKitConnector interface {
 
 	// AddLightAccessory creates a new accessory of type light
-	AddLightAccessory(name string, manufacturer string, serialnumber string, model string, lightmanipulator *HWLightManipulator) error
+	AddLightAccessory(name string, manufacturer string, serialnumber string, model string, lightmanipulator HWLightManipulator) error
 
 	// PublishAccessories starts the communication via the HAP protocol
 	PublishAccessories(pin string) error

@@ -1,38 +1,34 @@
 package main
 
-import (
-	"log"
+import "log"
 
-	"github.com/brutella/hc"
-	"github.com/brutella/hc/accessory"
-)
-
-func turnLightOn() {
-	log.Println("Turn Light On")
+// HWLightManipulatorImpl dummy implementation of the HW light
+type HWLightManipulatorImpl struct {
 }
 
-func turnLightOff() {
-	log.Println("Turn Light Off")
+// NewHWLightManipulator creates a new instance of the light
+func NewHWLightManipulator() *HWLightManipulatorImpl {
+	l := new(HWLightManipulatorImpl)
+	return l
+}
+
+// TunLight implements a dummy light for now
+func (l *HWLightManipulatorImpl) TunLight(on bool) {
+	if on == true {
+		log.Println("Turn Light On")
+	} else {
+		log.Println("Turn Light Off")
+	}
 }
 
 func main() {
 
-	lightInfo := accessory.Info{
-		Name:         "Light",
-		Manufacturer: "Martin Jansa",
-		SerialNumber: "1",
-		Model:        "4x18W light tube",
-	}
+	// create the HomeKit connector
+	hcConnector := NewHomeKitConnector()
 
-	light := accessory.NewLightbulb(lightInfo)
-
-	light.Lightbulb.On.OnValueRemoteUpdate(func(on bool) {
-		if on == true {
-			turnLightOn()
-		} else {
-			turnLightOff()
-		}
-	})
+	// add light
+	hwLight := NewHWLightManipulator()
+	hcConnector.AddLightAccessory("Light", "Martin Jansa", "1", "4x18W light tube", hwLight)
 
 	/*
 		doorInfo := accessory.Info{
@@ -52,18 +48,8 @@ func main() {
 		})
 	*/
 
-	config := hc.Config{Pin: "85378743"}
-	t, err := hc.NewIPTransport(config, light.Accessory)
+	err := hcConnector.PublishAccessories("85378743")
 	if err != nil {
 		log.Panic(err)
 	}
-
-	hc.OnTermination(func() {
-		log.Println("Stopping...")
-		t.Stop()
-	})
-
-	log.Println("Starting...")
-	t.Start()
-
 }
